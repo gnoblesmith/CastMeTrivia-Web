@@ -49,16 +49,6 @@ function init () {
 	console.log = function (msg) { };
 }
 
-function testPhone () {
-	this.id = "";
-	this.name = "";
-	
-	this.connect = function () {
-		triviaOnConnect(id);
-		//triviaMessageReceived(this.id + "|config|player name=" + this.name);
-	}
-}
-
 function keydownhandler(e) {
 	if (e.keyCode == 16) {	// shift
 		debug_canvas.style.opacity = 0.4;
@@ -90,22 +80,18 @@ var host_id;
 function advance_test() {
 	if (ctr == 0) {
 		write_to_debug_screen ("Loading Trivia.");
-		triviaWindowLoad(); 	
+		triviaWindowLoad();
 	} else if (ctr == 1) {
-		//write_to_debug_screen ("Setting \"waiting for host connection\"");
-		//setWaitingForHostConnection();
-		//host_id = "1";
-	} else if (ctr == 2) {
 		host_id = "1";	
 		write_to_debug_screen ("Connecting " + host_id + "...");
 		triviaOnConnect(host_id);
-	} else if (ctr == 3) {
+	} else if (ctr == 2) {
 		write_to_debug_screen (host_id + " requesting host..");
 		triviaMessageReceived(host_id,HOST_REQUEST);
-	} else if (ctr == 4) {
+	} else if (ctr == 3) {
 		write_to_debug_screen (host_id + " starting game...");
 		triviaMessageReceived(host_id, BEGIN_ROUND);
-	}
+	} 
 	
 	ctr++;
 }

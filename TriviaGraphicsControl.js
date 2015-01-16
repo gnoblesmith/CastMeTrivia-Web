@@ -3,27 +3,29 @@ var GUI_SPLASH_START				= 	1;
 var GUI_SPLASH_DONE 				= 	2;
 var GUI_WAITING_FOR_HOST_CONNECTION	=	3;
 var GUI_WAITING_FOR_HOST_TO_START	=	4;
-var GUI_QUESTION					=	5;
+var GUI_ROUND						=	5;
+var GUI_POST_ROUND					=	6;
 
 var screenState = 0;
 var splashImg;
 var wfhc_anim;
+var timer_value						=	100;
 
 // This code assumes the following is defined elsewhere (should be moved into this file eventually maybe)
 // background_canvas, foreground_canvas, debug_canvas
 // background_ctx, foreground_ctx, debug_ctx
 // DEFAULT_TIMER_RESOLUTION 
-setSplashScreen = function() {
+guiSetSplashScreen = function() {
 	screenState = GUI_SPLASH_START;
 	draw();
 }
 
-setWaitingForHostConnection = function() {
+guiSetWaitingForHostConnection = function() {
 	screenState = GUI_WAITING_FOR_HOST_CONNECTION;
 	draw();
 }
 
-setWaitingForHostStart = function() {
+guiSetWaitingForHostStart = function() {
 	screenState = GUI_WAITING_FOR_HOST_TO_START;
 	draw();
 }
@@ -55,35 +57,73 @@ draw = function(isResize) {
 														0, 0, width, height);
 			dotdotdotAnimation("Waiting for host to begin game", 1000); // TODO: Include host's name here
 			break;
-		case GUI_QUESTION:
+		case GUI_ROUND:
 			clearInterval(wfhc_anim);
-			background_ctx.fillStyle = "gray";
-			background_ctx.fillRect (0, 0, background_canvas.width, background_canvas.height);
+			displayQandA();
 			
-			foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
-			alert(1);
-			foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
-			foreground_ctx.fillStyle = "purple";
+			var time_location_x_frac = 0.8;
+			var time_location_y_frac = 0.8;
+			var time_location_x = foreground_canvas.width * time_location_x_frac;
+			var time_location_y = foreground_canvas.height * time_location_y_frac;
+			
+			debug_ctx.strokeStyle="white";
+			debug_ctx.moveTo(time_location_x, 0);
+			debug_ctx.lineTo(time_location_x, debug_canvas.height);
+			debug_ctx.stroke();
+			
+			//foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
+			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+			foreground_ctx.fillStyle = "red";
 			foreground_ctx.textAlign = "center";
-			
-			foreground_ctx.font = "40px Arial"; // TODO: Parameterize, resize, etc
-			foreground_ctx.fillText(q, foreground_canvas.width * 0.5, foreground_canvas.height * 0.1);
-			
-			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
-			foreground_ctx.fillText(a1, foreground_canvas.width * 0.5, foreground_canvas.height * 0.4);
-			
-			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
-			foreground_ctx.fillText(a2, foreground_canvas.width * 0.5, foreground_canvas.height * 0.5);
-			
-			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
-			foreground_ctx.fillText(a3, foreground_canvas.width * 0.5, foreground_canvas.height * 0.6);
-			
-			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
-			foreground_ctx.fillText(a4, foreground_canvas.width * 0.5, foreground_canvas.height * 0.7);
-			
+			foreground_ctx.fillText(timer_value, time_location_x, time_location_y);
 			break;
+		case GUI_POST_ROUND:
+			var time_location_x_frac = 0.2;
+			var time_location_y_frac = 0.2;
+			var time_location_x = foreground_canvas.width * time_location_x_frac;
+			var time_location_y = foreground_canvas.height * time_location_y_frac;
+			
+			debug_ctx.strokeStyle="white";
+			debug_ctx.moveTo(time_location_x, 0);
+			debug_ctx.lineTo(time_location_x, debug_canvas.height);
+			debug_ctx.stroke();
+		
+			displayQandA();
+		
+			//foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
+			foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+			foreground_ctx.fillStyle = "red";
+			foreground_ctx.textAlign = "center";
+			foreground_ctx.fillText(timer_value, time_location_x, time_location_y);
+			
 	}
 }
+
+function displayQandA () {
+	background_ctx.fillStyle = "gray";
+	background_ctx.fillRect (0, 0, background_canvas.width, background_canvas.height);
+			
+	foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
+	foreground_ctx.clearRect (0, 0, foreground_canvas.width, foreground_canvas.height);
+	foreground_ctx.fillStyle = "purple";
+	foreground_ctx.textAlign = "center";
+			
+	foreground_ctx.font = "40px Arial"; // TODO: Parameterize, resize, etc
+	foreground_ctx.fillText(q, foreground_canvas.width * 0.5, foreground_canvas.height * 0.1);
+			
+	foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+	foreground_ctx.fillText(a1, foreground_canvas.width * 0.5, foreground_canvas.height * 0.4);
+			
+	foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+	foreground_ctx.fillText(a2, foreground_canvas.width * 0.5, foreground_canvas.height * 0.5);
+			
+	foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+	foreground_ctx.fillText(a3, foreground_canvas.width * 0.5, foreground_canvas.height * 0.6);
+			
+	foreground_ctx.font = "20px Arial"; // TODO: Parameterize, resize, etc
+	foreground_ctx.fillText(a4, foreground_canvas.width * 0.5, foreground_canvas.height * 0.7);
+}		
+
 
 function splashFadeIn(total_time) {
 	var start = $.now();
@@ -161,13 +201,24 @@ function dotdotdotAnimation(str, period_interval) {
 
 var q;
 var a1, a2, a3, a4;
-function showQuestion(question, ans1, ans2, ans3, ans4) {
+function guiShowRound(question, ans1, ans2, ans3, ans4) {
 	q = question;
 	a1 = ans1;
 	a2 = ans2;
 	a3 = ans3;
 	a4 = ans4;
 	
-	screenState = GUI_QUESTION;
+	screenState = GUI_ROUND;
+	draw();
+}
+
+function guiShowPostRound() {
+	// TODO: Get list of winners etc.
+	screenState = GUI_POST_ROUND;
+	draw();
+}
+
+function guiUpdateTimer(time_left) {
+	timer_value = time_left;
 	draw();
 }
