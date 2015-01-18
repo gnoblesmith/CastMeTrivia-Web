@@ -89,10 +89,18 @@ function advance_test() {
 		write_to_debug_screen (host_id + " requesting host..");
 		triviaMessageReceived(host_id,HOST_REQUEST);
 	} else if (ctr == 3) {
-		write_to_debug_screen (host_id + " starting game...");
-		triviaMessageReceived(host_id, BEGIN_ROUND);
+		write_to_debug_screen (host_id + " beginning game...");
+		triviaMessageReceived(host_id, BEGIN_ROUND + "|" + CFG_ROUND_TIMER + "=" + CFG_DISABLE + "|" + CFG_POST_ROUND_TIMER + "=" + CFG_DISABLE);
+	} else if (ctr == 4) {
+		write_to_debug_screen (host_id + " ending round...");
+		triviaMessageReceived(host_id, END_ROUND);
+	} else if (ctr == 5) {
+		write_to_debug_screen (host_id + " beginning round...");
+		triviaMessageReceived (host_id, BEGIN_ROUND);
+	} else if (ctr == 6) {
+		write_to_debug_screen (host_id + " ending round...");
+		triviaMessageReceived (host_id, END_ROUND);
 	} 
-	
 	ctr++;
 }
 
@@ -103,7 +111,6 @@ function sendCastMessage (id, data) {
 			write_to_debug_screen(id + " connected.");
 		} else if (data == "host") {
 			write_to_debug_screen(id + " granted host.");
-			triviaMessageReceived(id, "begin round");
 		}
 	}
 }

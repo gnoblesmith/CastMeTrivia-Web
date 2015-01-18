@@ -159,7 +159,7 @@
 			                        break;
 			                    }
 			                case HOST_REQUEST:
-			                    {
+			                    {	
 			                        if (m_gameState == GAME_PENDING) {
 			                            // Assign host if not already assigned
 			                            if (m_hostID == "" && m_players.length > senderIndex) {
@@ -169,7 +169,6 @@
 			                                if (typeof(DEBUG_MODE) != "undefined") { // TODO: remove
 			                                    guiSetWaitingForHostStart();
 			                                }
-
 
 			                                sendToAllPlayers(GAME_HOSTED, false); // Send to all but host that the game is ready
 			                                m_gameState = HOST_SELECTED;
@@ -189,6 +188,7 @@
 			                            // Check if we have config info
 			                            if (data_split.length > 1) {
 			                                for (var j = 1; j < data_split.length; j++) {
+												alert(data_split[j]);
 			                                    configureTrivia(data_split[j], id);
 			                                }
 			                            }
@@ -346,7 +346,7 @@
 			        switch (key) {
 			            case CFG_ROUND_TIMER:
 			                {
-			                    m_round_timer_enable = (value == "true");
+								m_round_timer_enable = (value == "true");
 								// TODO: remove
 								if (typeof(DEBUG_MODE) == "undefined") {
 									if (!m_round_timer_enable) // If timer is disabled, make it disappear
