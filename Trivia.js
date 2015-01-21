@@ -67,10 +67,8 @@
 			// Called to initialize stuff
 			// *********************************
 			triviaWindowLoad = function() {
-			    if (typeof(DEBUG_MODE) != "undefined") { // TODO: remove
-			        guiSetSplashScreen();
-			    }
-
+			    guiSetSplashScreen();
+			    
 			    m_roundTime = DEFAULT_ROUND_TIME;
 			    m_postRoundTime = DEFAULT_POST_ROUND_TIME;
 
@@ -93,12 +91,6 @@
 			    clearInterval(m_qboxFadeInVar);
 			    clearInterval(m_roundTimerVar);
 			    clearInterval(m_postRoundTimerVar);
-
-			    if (typeof(DEBUG_MODE) == "undefined") { // TODO: remove
-			        // Make text box disappear
-			        var qbox = document.getElementById("qbox");
-			        qbox.style.opacity = 0.0;
-			    }
 
 			}
 
@@ -159,17 +151,15 @@
 			                        break;
 			                    }
 			                case HOST_REQUEST:
-			                    {	
+			                    {
 			                        if (m_gameState == GAME_PENDING) {
 			                            // Assign host if not already assigned
 			                            if (m_hostID == "" && m_players.length > senderIndex) {
 			                                m_hostID = m_players[senderIndex].id;
 			                                triviaSendMessage(m_hostID, HOST_ACK);
 
-			                                if (typeof(DEBUG_MODE) != "undefined") { // TODO: remove
-			                                    guiSetWaitingForHostStart();
-			                                }
-
+			                                guiSetWaitingForHostStart();
+			                      
 			                                sendToAllPlayers(GAME_HOSTED, false); // Send to all but host that the game is ready
 			                                m_gameState = HOST_SELECTED;
 			                            } else {
@@ -188,7 +178,6 @@
 			                            // Check if we have config info
 			                            if (data_split.length > 1) {
 			                                for (var j = 1; j < data_split.length; j++) {
-												alert(data_split[j]);
 			                                    configureTrivia(data_split[j], id);
 			                                }
 			                            }
@@ -321,13 +310,6 @@
 			// *****************************************
 			setGamePending = function() {
 			    m_gameState = GAME_PENDING;
-
-			    if (typeof(DEBUG_MODE) == "undefined") // TODO: remove
-			    {
-			        var qbox = document.getElementById("qbox");
-			        qbox.style.opacity = 1.0;
-			        qbox.innerHTML = "Game Pending...";
-			    }
 			}
 
 			// *****************************************
@@ -346,14 +328,8 @@
 			        switch (key) {
 			            case CFG_ROUND_TIMER:
 			                {
-								m_round_timer_enable = (value == "true");
-								// TODO: remove
-								if (typeof(DEBUG_MODE) == "undefined") {
-									if (!m_round_timer_enable) // If timer is disabled, make it disappear
-									{
-										document.getElementById("timer").style.opacity = 0;
-									}
-								}
+			                    m_round_timer_enable = (value == "true");
+								
 			                    break;
 			                }
 			            case CFG_POST_ROUND_TIMER:
@@ -409,27 +385,15 @@
 			            var a4 = $.trim(split_data[4]);
 			            m_roundAnswer = $.trim(split_data[5]);
 
-			            // temporary code while we make the transition to the new graphics. TODO: remove -GN
-			            if (typeof(DEBUG_MODE) == "undefined") {
-			                // Populate UI with question/answer choices
-			                var qbox = document.getElementById("qbox");
-			                var questionHTML = question + "<br>" + a1 + "<br>" + a2 + "<br>" + a3 + "<br>" + a4;
-			                qbox.innerHTML = questionHTML;
-
-			                // Fade in question/answer box
-			                m_fadeStartTime = $.now();
-			                m_qboxFadeInVar = setInterval(fadeIn, DEFAULT_TIMER_RESOLUTION);
-
-			            } else {
-			                guiShowRound(question,
-			                    a1,
-			                    a2,
-			                    a3,
-			                    a4
-			                );
+			            guiShowRound(question,
+							a1,
+			                a2,
+			                a3,
+			                a4
+			            );
 							
-							startRoundTimer();
-			            }
+						startRoundTimer();
+			            
 
 			            // send Q&A to m_players
 			            var i;
@@ -494,18 +458,9 @@
 			        resetPlayerAnswers();
 			    }
 
+				guiShowPostRound();
+				startPostRoundTimer();
 				
-				// TODO: remove
-				if (typeof(DEBUG_MODE) == "undefined") {
-					var qbox = document.getElementById("qbox");
-					var strWinners = ""; // Winners list to display
-					var strScores = ""; // Scores list to display
-					qbox.innerHTML = (qbox.innerHTML + "<br><br>" + "Answer: " + m_roundAnswer + "<br><br>" + "Winners:" + strWinners + "<br><br>" + "Scores:<br>" + getScores());
-					startPostRoundTimer();
-				} else {
-					guiShowPostRound();
-					startPostRoundTimer();
-				}
 			}
 
 			function resetPlayerAnswers() {
@@ -548,30 +503,6 @@
 			    }
 			}
 
-			function fadeIn() {
-			    var qbox = document.getElementById("qbox"); // FIXME: Replace this with something not hardcoded
-
-			    // m_fadeStartTime must be set by now, if not then set opaque and return
-			    if (typeof m_fadeStartTime === "undefined" || m_fadeStartTime <= 0) {
-			        qbox.style.opacity = 1.0;
-			        return;
-			    }
-
-			    var totalTime = DEFAULT_FADE_IN_CFG_POST_ROUND_TIMER;
-			    var timePassed = $.now() - m_fadeStartTime;
-			    var opacity = 1.0; // Default to opaque
-
-			    // If time is up, make sure that the object is opaque (and protect against divide-by-zero), otherwise increase opacity
-			    if (timePassed >= totalTime || typeof(totalTime) == "undefined" || totalTime == 0) {
-			        qbox.style.opacity = 1.0;
-			        clearInterval(m_qboxFadeInVar);
-			        startRoundTimer();
-			    } else {
-			        // Keep on fading in
-			        qbox.style.opacity = timePassed / totalTime;
-			    }
-			}
-
 			function startRoundTimer() {
 			    if (m_round_timer_enable) {
 			        m_roundStartTime = $.now();
@@ -584,22 +515,10 @@
 			    var timeLeft = m_roundTime - ($.now() - m_roundStartTime);
 			    timeLeft = Math.round(timeLeft / 1000.0); // Convert to seconds
 				
-				if (typeof(DEBUG_MODE) == "undefined") {
-					var timer = document.getElementById("timer");
-					timer.innerHTML = timeLeft + " seconds remaining..";
-					timer.style.opacity = 1.0;
-
-					if (timeLeft <= 0) {
-						timer.innerHTML = 0;
-						clearInterval(m_roundTimerVar);
-						endRound(); // fixme todo - give phones time to give last-second answer?
-					}
-				} else {
-					guiUpdateTimer(timeLeft);
+				guiUpdateTimer(timeLeft);
 					
-					if (timeLeft <= 0) {
-						clearInterval(m_roundTimerVar);
-						endRound(); // fixme todo - give phones time to give last-second answer?
-					}
+				if (timeLeft <= 0) {
+					clearInterval(m_roundTimerVar);
+					endRound(); // fixme todo - give phones time to give last-second answer?
 				}
 			}

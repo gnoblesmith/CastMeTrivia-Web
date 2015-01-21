@@ -3,9 +3,9 @@ var foreground_canvas, foreground_ctx;
 var debug_canvas, debug_ctx; // for displaying debug info
 var console;
 var p1;
-var DEBUG_MODE;
+//var DEBUG_MODE;
 function init () {
-	DEBUG_MODE = "definitely not undefined";
+	//DEBUG_MODE = "definitely not undefined";
 	document.onkeyup = keyuphandler;
 	document.onkeydown = keydownhandler;
 	ctr = 0;
@@ -89,18 +89,10 @@ function advance_test() {
 		write_to_debug_screen (host_id + " requesting host..");
 		triviaMessageReceived(host_id,HOST_REQUEST);
 	} else if (ctr == 3) {
-		write_to_debug_screen (host_id + " beginning game...");
-		triviaMessageReceived(host_id, BEGIN_ROUND + "|" + CFG_ROUND_TIMER + "=" + CFG_DISABLE + "|" + CFG_POST_ROUND_TIMER + "=" + CFG_DISABLE);
-	} else if (ctr == 4) {
-		write_to_debug_screen (host_id + " ending round...");
-		triviaMessageReceived(host_id, END_ROUND);
-	} else if (ctr == 5) {
-		write_to_debug_screen (host_id + " beginning round...");
-		triviaMessageReceived (host_id, BEGIN_ROUND);
-	} else if (ctr == 6) {
-		write_to_debug_screen (host_id + " ending round...");
-		triviaMessageReceived (host_id, END_ROUND);
+		write_to_debug_screen (host_id + " starting game...");
+		triviaMessageReceived(host_id, BEGIN_ROUND);
 	} 
+	
 	ctr++;
 }
 
@@ -111,6 +103,7 @@ function sendCastMessage (id, data) {
 			write_to_debug_screen(id + " connected.");
 		} else if (data == "host") {
 			write_to_debug_screen(id + " granted host.");
+			triviaMessageReceived(id, "begin round");
 		}
 	}
 }
