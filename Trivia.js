@@ -67,6 +67,8 @@
 			// Called to initialize stuff
 			// *********************************
 			triviaWindowLoad = function() {
+				guiInit();
+			
 			    guiSetSplashScreen();
 			    
 			    m_roundTime = DEFAULT_ROUND_TIME;

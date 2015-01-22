@@ -1,6 +1,4 @@
-var background_canvas, background_ctx;
-var foreground_canvas, foreground_ctx;
-var debug_canvas, debug_ctx; // for displaying debug info
+
 var console;
 var p1;
 //var DEBUG_MODE;
@@ -12,38 +10,7 @@ function init () {
 	
 	p1 = new Player();
 	p1.id = "1";
-	p1.name = "Gabe";
-	
-	background_canvas = document.getElementById('background_canvas');
-	background_ctx = background_canvas.getContext('2d');
-	
-	foreground_canvas = document.getElementById('foreground_canvas');
-	foreground_ctx = foreground_canvas.getContext('2d');
-	
-	debug_canvas = document.getElementById('debug_canvas');
-	debug_ctx = debug_canvas.getContext('2d');
-	
-	// resize the canvas to fill browser window dynamically
-    window.addEventListener('resize', resizeCanvas, false);
-	function resizeCanvas() {
-		background_canvas.width = window.innerWidth;
-		background_canvas.height = window.innerHeight;
-		
-		// reusing background size - in case of rapid quick resizing,
-		// at least all of our canvases will remain aligned
-		foreground_canvas.width = background_canvas.width;
-		foreground_canvas.height = background_canvas.height;
-	
-		debug_canvas.width = background_canvas.width;
-		debug_canvas.height = background_canvas.height;
-	
-		width = background_canvas.width;
-		height = background_canvas.height;	
-		
-		draw();
-	}
-	resizeCanvas();
-	
+	p1.name = "Gabe";	
 	
 	console = new Object();
 	console.log = function (msg) { };
@@ -111,15 +78,17 @@ function sendCastMessage (id, data) {
 var debug_txt_x_frac = 0.1;
 var debug_txt_y_frac = 0.1;
 function write_to_debug_screen (str) {
-	var debug_x_loc = debug_canvas.width * debug_txt_x_frac;
-	var debug_y_loc = debug_canvas.height * debug_txt_y_frac;
+	if (typeof(debug_ctx) != "undefined") {
+		var debug_x_loc = debug_canvas.width * debug_txt_x_frac;
+		var debug_y_loc = debug_canvas.height * debug_txt_y_frac;
 
-	var imageData = debug_ctx.getImageData(0, 0, debug_canvas.width, debug_canvas.height);
-	debug_ctx.clearRect(0, 0, debug_canvas.width, debug_canvas.height);
-	debug_ctx.putImageData(imageData, 0, 35);
+		var imageData = debug_ctx.getImageData(0, 0, debug_canvas.width, debug_canvas.height);
+		debug_ctx.clearRect(0, 0, debug_canvas.width, debug_canvas.height);
+		debug_ctx.putImageData(imageData, 0, 35);
 	
-	debug_ctx.font = "30px Arial"; // TODO: Parameterize, resize, etc
-	debug_ctx.fillStyle = "red";
-	debug_ctx.textAlign = "left";
-	debug_ctx.fillText(str, debug_x_loc, debug_y_loc);
+		debug_ctx.font = "30px Arial"; // TODO: Parameterize, resize, etc
+		debug_ctx.fillStyle = "red";
+		debug_ctx.textAlign = "left";
+		debug_ctx.fillText(str, debug_x_loc, debug_y_loc);
+	}
 }

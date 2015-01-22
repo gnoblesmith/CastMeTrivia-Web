@@ -10,6 +10,43 @@ var screenState = 0;
 var splashImg;
 var wfhc_anim;
 var timer_value						=	100;
+var background_canvas, background_ctx;
+var foreground_canvas, foreground_ctx;
+var debug_canvas, debug_ctx; // for displaying debug info
+
+guiInit = function() {
+
+	background_canvas = document.getElementById('background_canvas');
+	background_ctx = background_canvas.getContext('2d');
+	
+	foreground_canvas = document.getElementById('foreground_canvas');
+	foreground_ctx = foreground_canvas.getContext('2d');
+	
+	debug_canvas = document.getElementById('debug_canvas');
+	debug_ctx = debug_canvas.getContext('2d');
+	
+	
+	// resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', resizeCanvas, false);
+	function resizeCanvas() {
+		background_canvas.width = window.innerWidth;
+		background_canvas.height = window.innerHeight;
+		
+		// reusing background size - in case of rapid quick resizing,
+		// at least all of our canvases will remain aligned
+		foreground_canvas.width = background_canvas.width;
+		foreground_canvas.height = background_canvas.height;
+	
+		debug_canvas.width = background_canvas.width;
+		debug_canvas.height = background_canvas.height;
+	
+		width = background_canvas.width;
+		height = background_canvas.height;	
+		
+		draw();
+	}
+	resizeCanvas();
+}
 
 // This code assumes the following is defined elsewhere (should be moved into this file eventually maybe)
 // background_canvas, foreground_canvas, debug_canvas
