@@ -67,16 +67,16 @@
 			// Called to initialize stuff
 			// *********************************
 			triviaWindowLoad = function() {
+			    // Init game state
+			    resetRound();
+			    setGamePending();
+			
 				guiInit();
 			
 			    guiSetSplashScreen();
 			    
 			    m_roundTime = DEFAULT_ROUND_TIME;
 			    m_postRoundTime = DEFAULT_POST_ROUND_TIME;
-
-			    // Init game state
-			    resetRound();
-			    setGamePending();
 			}
 
 			// *********************************
@@ -258,19 +258,20 @@
 			            name: "",
 			            answer: ""
 			        });
+					sendCastMessage(id, CONNECTED + "|" + UID + "=" + id);
 
 			        // Add the player to the game depending on game state
 			        switch (m_gameState) {
 			            case GAME_PENDING:
 			                {
 			                    // If this is the first player, initialize the game
-			                    if (m_players.length == 1) {
-			                        resetRound();
-			                        setGamePending();
-			                    }
-			                    if (m_readyForMessages) {
-			                        sendCastMessage(id, CONNECTED + "|" + UID + "=" + id);
-			                    }
+			                    // GN: Assuming this is done during windowOnLoad if (m_players.length == 1) {
+			                    //    resetRound();
+			                    //    setGamePending();
+			                    //}
+			                    //if (m_readyForMessages) {
+			                    //    sendCastMessage(id, CONNECTED + "|" + UID + "=" + id);
+			                    //}
 			                    break;
 			                }
 			            case HOST_SELECTED:
